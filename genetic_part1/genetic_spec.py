@@ -1,12 +1,11 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Mon Feb 21 11:24:15 2022
+import mastermind as mm
+import random
 
-@author: agademer & tdrumond
 
-Template for exercise 1
-(genetic algorithm module specification)
-"""
+
+
+MATCH = mm.MastermindMatch(secret_size=4)
+
 
 
 class Individual:
@@ -45,7 +44,11 @@ class GASolver:
 
     def reset_population(self, pop_size=50):
         """ Initialize the population with pop_size random Individuals """
-        pass  # REPLACE WITH YOUR CODE
+        self._population = []
+        for _ in range(pop_size):
+            chromosome = MATCH.generate_random_guess()
+            fitness = MATCH.rate_guess(chromosome)
+            self._population.append(Individual(chromosome, fitness))
 
     def evolve_for_one_generation(self):
         """ Apply the process for one generation : 
@@ -57,15 +60,28 @@ class GASolver:
                 mutation_rate i.e., mutate it if a random value is below   
                 mutation_rate
         """
-        pass  # REPLACE WITH YOUR CODE
+        self._population.sort(reverse=True)
+        survivors = self._population[:int(len(self._population) * self._selection_rate)]
+        while len(self._population) < len(survivors):
+            parent1, parent2 = random.sample(survivors, 2)
+            crossover_point = random.randint(1, len(parent1.chromosome) - 1)
+            new_chromosome = parent1.chromosome[:crossover_point] + parent2.chromosome[crossover_point:]
+            if random.random() < self._mutation_rate:
+                mutation_index = random.randint(0, len(new_chromosome) - 1)
+                new_chromosome[mutation_index] = random.choice(mm.COLORS)
+            new_fitness = MATCH.rate_guess(new_chromosome)
+            self._population.append(Individual(new_chromosome, new_fitness))
+
+
 
     def show_generation_summary(self):
         """ Print some debug information on the current state of the population """
-        pass  # REPLACE WITH YOUR CODE
+        for individual in self._population:
+            print(individual)
 
     def get_best_individual(self):
         """ Return the best Individual of the population """
-        pass  # REPLACE WITH YOUR CODE
+        return max(self._population, key=lambda indiv: indiv.fitness)
 
     def evolve_until(self, max_nb_of_generations=500, threshold_fitness=None):
         """ Launch the evolve_for_one_generation function until one of the two condition is achieved : 
@@ -73,4 +89,17 @@ class GASolver:
             - The fitness of the best Individual is greater than or equal to
               threshold_fitness
         """
-        pass  # REPLACE WITH YOUR CODE
+        for _ in range(max_nb_of_generations):
+            self.evolve_for_one_generation()
+            if threshold_fitness and self.get_best_individual().fitness >= threshold_fitness:
+                break
+
+
+
+solver = GASolver()
+solver.reset_population()
+solver.evolve_until(threshold_fitness=MATCH.max_score())
+
+best = solver.get_best_individual()
+print(f"Best guess {best.chromosome}")
+print(f"Problem solved? {MATCH.is_correct(best.chromosome)}")
