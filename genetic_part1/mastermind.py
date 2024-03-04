@@ -23,10 +23,20 @@ def get_possible_colors():
     """Getter function to read the array of possible colors"""
     return _colors
 
+def encode_guess(guess: List[str]) -> List[int]:
+    """Encode a guess in a list of integest corresponding to the color postion
+    int the list of valid colors
 
+    Args:
+        guess (list[str]): a mastermind guess as a list of color strings
+
+    Returns:
+        list[int]: a mastermind guess as a list of integers
+    """
+    return [_colors_to_int[c] for c in guess]
 def generate_random_secret(size) -> List[str]:
     """Generate a random secret of a given size"""
-    secret = [choice(_colors) for _ in range(size)]
+    secret = [choice(range(len(_colors))) for i in range(size)]
     return secret
 
 
@@ -103,14 +113,4 @@ class MastermindMatch:
         return self.correct_position_points * len(self._secret)
 
 
-def encode_guess(guess: List[str]) -> List[int]:
-    """Encode a guess in a list of integest corresponding to the color postion
-    int the list of valid colors
 
-    Args:
-        guess (list[str]): a mastermind guess as a list of color strings
-
-    Returns:
-        list[int]: a mastermind guess as a list of integers
-    """
-    return [_colors_to_int[c] for c in guess]
