@@ -34,20 +34,18 @@ class Individual:
 
 
 class GAProblem:
-    """Defines a Genetic algorithm problem to be solved by ga_solver"""
-    def __init__(self):
-        """Initialization"""
-        self.chromosome=self.chromosome
-        self.fitness=self.fitness
-        self.chromosome_mutation=self.chromosome_mutation   
-    def chromosome(self):
+    #in this class we call all function that needed to be change from the mastermind problem to the tsp problem. this is because we isolated these parts of the function
+    # that the algorithm can be use for multiple problem. 
+
+    """Defines a Genetic algorithm problem to be solved by ga_solver"""  
+    def chromosome_fonction(self):
         pass
-    def fitness(self, chromosome): 
-        self.chromosome=chromosome
+    def fitness_fonction(self, chromosome): 
+        self.chromosome_fonction=chromosome
         pass
-    def evolve_generation(self):
+    def evolve_generation(self, population, parent1, parent2):
         pass
-    def chromosome_mutation(self):
+    def chromosome_mutation(self, indexind):
         pass
 
 
@@ -65,14 +63,16 @@ class GASolver:
         self._mutation_rate = mutation_rate
         self._population = []
 
+#in this function we create a new chromosome and calculate its fitness, the list and the variable then constitue what we call an individual that we can add to a population. 
     def reset_population(self, pop_size=50):
         """ Initialize the population with pop_size random Individuals """
         for _ in range(pop_size): 
-            chromosome=self._problem.chromosome()
-            fitness =self._problem.fitness()
+            chromosome=self._problem.chromosome_fonction()
+            fitness =self._problem.fitness_fonction(chromosome)
             new_individual = Individual(chromosome, fitness)
             self._population.append(new_individual)
-
+#this function serves to refresh the population with new individual which has chromosome with a better fitness score, in order to maximize our chance to get the right combinaison in the end.
+#
     def evolve_for_one_generation(self):
         """ Apply the process for one generation : 
             -	Sort the population (Descending order)
@@ -96,17 +96,18 @@ class GASolver:
             while parent2 == parent1:
                 parent2 = random.choice(self._population)
 
-            new_chromosome = self._problem.evolve_generation(self._population,parent1,parent2)
-            new_fitness=self._problem.fitness(new_chromosome)
+            new_chromosome = self._problem.evolve_generation(parent1,parent2)
+            new_fitness=self._problem.fitness_fonction(new_chromosome)
             new_individual = Individual(new_chromosome, new_fitness) 
             new_added_indiv.append(new_individual)
         self._population = self._population + new_added_indiv
 
+        #the mutation is a phenomen that happen randomly and that change one of the chromosome. the population scooted through and once the mutation happen the corresponding chromosome see its value xhanged
         for indexind in self._population:
             if len(self._population) != 50:
                 if random.random() < self._mutation_rate:
-                    new_chromosome=self.problem.chromosome_mutation
-                    new_fitness =self._problem.fitness(new_chromosome)
+                    new_chromosome=self._problem.chromosome_mutation(indexind)
+                    new_fitness =self._problem.fitness_fonction(new_chromosome)
                     self._population.append(Individual(new_chromosome, new_fitness))
 
     def show_generation_summary(self):
