@@ -35,13 +35,19 @@ class Individual:
 
 class GAProblem:
     """Defines a Genetic algorithm problem to be solved by ga_solver"""
+    def __init__(self):
+        """Initialization"""
+        self.chromosome=self.chromosome
+        self.fitness=self.fitness
+        self.chromosome_mutation=self.chromosome_mutation   
     def chromosome(self):
         pass
     def fitness(self, chromosome): 
+        self.chromosome=chromosome
         pass
-    def evolve_generation(self, parent1, parent2):
+    def evolve_generation(self):
         pass
-    def chromosome_mutation(self, indexind):
+    def chromosome_mutation(self):
         pass
 
 
